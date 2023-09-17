@@ -39,12 +39,7 @@
     LC_PAPER = "en_AU.UTF-8";
     LC_TELEPHONE = "en_AU.UTF-8";
     LC_TIME = "en_AU.UTF-8";
-  }; # locale
-
-  services.xserver = { # TODO: move to ./gnome.nix; add stuff .
-    layout = "us";
-    xkbVariant = "";
-  }; 
+  }; # locale 
   
   sound.enable = true; # sound
   hardware.pulseaudio.enable = false;
@@ -65,10 +60,9 @@
     driSupport = true;
     driSupport32Bit = true;
   };
-  
+  nixpkgs.config.allowUnfree = true; # copium
   programs.fish.enable = true;
-  nixpkgs.config.allowUnfree = true;
-  programs.steam.enable = true; # lol
+  programs.steam.enable = true;
   users.users.mwe = { # user
     isNormalUser = true;
     extraGroups = [ "networkmanager" "wheel" ];
@@ -85,7 +79,6 @@
   }; # user
 
   environment.systemPackages = with pkgs; [ # sys packages
-    gnome.gnome-tweaks
     (wrapOBS { plugins = with obs-studio-plugins; [ 
       obs-vkcapture 
       obs-gstreamer ];

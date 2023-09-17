@@ -19,7 +19,8 @@
     # 'home-manager --flake .#user@host'
     homeConfigurations = {
       "mwe@catputer" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux; 
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        useGlobalPkgs = true; 
         extraSpecialArgs = { inherit inputs; }; 
         modules = [ ./home.nix ];
       };
