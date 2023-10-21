@@ -1,19 +1,20 @@
-{ pkgs, ... }:
+{  pkgs, ... }:
 {
   services.xserver = {
     enable = true;
     displayManager.gdm.enable = true;
     desktopManager.gnome.enable = true;
     layout = "us";
+    excludePackages = [ pkgs.xterm ];
   };
 
-  programs.dconf.enable = true;
+  programs.dconf.enable = true; # ./home.nix
 
   environment = {
-    gnome.excludePackages = (with pkgs; [
+    gnome.excludePackages = with pkgs; (( [
       gnome-photos
       gnome-tour
-      ]) ++ (with pkgs.gnome; [
+      ]) ++ (with gnome; [ # major solutions
       cheese # webcam tool
       gnome-music
       gedit # text editor
@@ -27,7 +28,11 @@
       yelp # Help view
       gnome-contacts
       gnome-initial-setup
-    ]);
+      gnome-maps
+      gnome-system-monitor
+      simple-scan
+      gnome-logs
+    ]));
     systemPackages = [ pkgs.gnome.gnome-tweaks ];  
     };
 }

@@ -2,8 +2,10 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, 
-  inputs, outputs, ... }: {
+{ pkgs, 
+  inputs,
+  outputs, ... }:
+{
   imports =
     [
       ./hardware-configuration.nix
@@ -16,38 +18,43 @@
       mwe = import ./home.nix;
     };
   };
-
-  boot.loader.systemd-boot.enable = true; # bootloader
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.initrd.kernelModules = [ "amdgpu" ];
   
-  nix.settings.experimental-features = [ "flakes" "nix-command" ]; # 
-
-  networking.hostName = "catputer"; # networking, hostname
-  networking.networkmanager.enable = true;
+  boot = {
+    loader = {
+      systemd-boot.enable = true;
+      efi.canTouchEfiVariables = true;
+    };
+    initrd.kernelModules = [ "amdgpu" ];
+  };
+  
+  nix.settings = {
+    experimental-features = [ "flakes" "nix-command" ]; #
+    substituters = [
+     # "https://hyprland.cachix.org"
+     ];
+    trusted-public-keys = [
+     # "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+     ]; 
+  };
+  
+  networking = {
+    hostName = "catputer";
+    networkmanager.enable = true;
+  };
 
   time.timeZone = "Asia/Bangkok"; # tz
 
-  i18n.defaultLocale = "en_US.UTF-8"; # locale
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "en_AU.UTF-8";
-    LC_IDENTIFICATION = "en_AU.UTF-8";
-    LC_MEASUREMENT = "en_AU.UTF-8";
-    LC_MONETARY = "en_AU.UTF-8";
-    LC_NAME = "en_AU.UTF-8";
-    LC_NUMERIC = "en_AU.UTF-8";
-    LC_PAPER = "en_AU.UTF-8";
-    LC_TELEPHONE = "en_AU.UTF-8";
-    LC_TIME = "en_AU.UTF-8";
-  }; # locale 
+  i18n.defaultLocale = "en_AU.UTF-8"; # locale
   
   sound.enable = true; # sound
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
+    alsa = {
+      enable = true;
+      support32Bit = true;
+    };
     pulse.enable = true;
   }; # sound
 
@@ -55,14 +62,17 @@
     extraPackages = with pkgs; [
       rocm-opencl-icd
       rocm-opencl-runtime
-      amdvlk
     ];
     driSupport = true;
     driSupport32Bit = true;
   };
-  nixpkgs.config.allowUnfree = true; # copium
-  programs.fish.enable = true;
-  programs.steam.enable = true;
+  
+  nixpkgs.config.allowUnfree = true;
+  programs = {
+    fish.enable = true;
+    steam.enable = true;
+  };
+  
   users.users.mwe = { # user
     isNormalUser = true;
     extraGroups = [ "networkmanager" "wheel" ];
@@ -75,6 +85,7 @@
       	withVencord = true;
       })
       telegram-desktop
+      steamguard-cli
     ]; # user packages
   }; # user
 
@@ -84,6 +95,7 @@
       obs-gstreamer ];
       })
     lazygit
+    nil
   ]; # sys packages
   
   # This value determines the NixOS release from which the default
