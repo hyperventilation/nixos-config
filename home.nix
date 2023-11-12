@@ -24,7 +24,9 @@
     helix = { enable = true; defaultEditor = true; };
     home-manager.enable = true;
     git.enable = true;
+    direnv  = { enable = true; nix-direnv.enable = true; };
   };
+  
   # TODO: move stuff
   dconf.settings = {
      "org/gnome/desktop/screensaver" = {
