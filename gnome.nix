@@ -18,6 +18,7 @@
         gnome-connections
         gnome-text-editor
         evince # nice naming conventions
+        gedit
       ]
       ++ (with gnome; [
         gnome-font-viewer
@@ -26,7 +27,6 @@
         seahorse
         cheese # webcam tool
         gnome-music
-        gedit # text editor
         epiphany # web browser
         geary # email reader
         gnome-characters

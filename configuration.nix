@@ -20,14 +20,18 @@
   };
 
   boot = {
+    kernelPackages = pkgs.linuxPackages_latest;
     loader = {
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     };
     initrd.kernelModules = ["amdgpu"];
   };
-
-  nix.settings.experimental-features = ["nix-command" "flakes"];
+  
+  nix.settings = {
+    experimental-features = ["nix-command" "flakes"];
+    auto-optimise-store = true;
+  };
 
   networking = {
     hostName = "catputer";
@@ -41,6 +45,7 @@
   sound.enable = true;
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
+
   services.pipewire = {
     enable = true;
     alsa = {
@@ -60,9 +65,19 @@
   };
 
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.permittedInsecurePackages = ["electron-25.9.0"];
   programs = {
+    gamemode.enable = true;
     fish.enable = true;
-    steam.enable = true;
+    steam = {
+      enable = true;
+      package = pkgs.steam.override {
+        extraPkgs = pkgs:
+          with pkgs; [
+            gamemode
+          ];
+      };
+    };
   };
 
   users.users.mwe = {
@@ -78,6 +93,8 @@
       telegram-desktop
       steamguard-cli
       spotify
+      obsidian
+      mangohud
     ];
   };
 
@@ -87,11 +104,11 @@
         obs-vkcapture
       ];
     })
+    vscode-fhs # noob
+    helix
     lazygit
-    nil
-    cachix
+    libreoffice-qt # :)
     (nerdfonts.override {fonts = ["MPlus"];})
-    inputs.getchvim.packages."x86_64-linux".default # shout in getchoo
     blackbox-terminal
   ];
 
