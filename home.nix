@@ -39,14 +39,13 @@
     "org/gnome/desktop/wm/keybindings" = {close = [];};
     "org/gnome/desktop/input-sources" = {xkb-options = ["terminate:ctrl_alt_bksp" "grp:alt_shift_toggle"];};
     "com/raggesilver/BlackBox" = {
-      font = "M+CodeLatX Nerd Font Mono Medium Expanded 12";
+      font = "M+CodeLat60 Nerd Font Mono Medium Expanded 12";
     };
   };
 
   # Nicely reload system units when changing configs
   systemd = {
     user.startServices = "sd-switch";
-    coredump.enable = false;
   };
   home.stateVersion = "23.05";
 }
