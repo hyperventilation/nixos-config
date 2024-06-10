@@ -3,10 +3,8 @@
 
   nixConfig = {
     accept-flake-config = true;
-    extra-substituters = [
-      "https://nix-community.cachix.org"
-      "https://devenv.cachix.org"
-    ];
+    extra-substituters =
+      [ "https://nix-community.cachix.org" "https://devenv.cachix.org" ];
     extra-trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
@@ -22,21 +20,15 @@
     };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    home-manager,
-    ...
-  } @ inputs:
-    {
+  outputs = { self, nixpkgs, home-manager, ... }@inputs: {
     nixosModules.default = { config, pkgs, lib, ... }: {
       imports = [
         ./hardware-configuration.nix
         inputs.home-manager.nixosModules.home-manager
       ];
-      
+
       home-manager = {
-        extraSpecialArgs = {inherit inputs self;};
+        extraSpecialArgs = { inherit inputs self; };
         users.mwe = import ./home.nix;
       };
 
@@ -46,14 +38,14 @@
           systemd-boot.enable = true;
           efi.canTouchEfiVariables = true;
         };
-        initrd.kernelModules = ["amdgpu"];
+        initrd.kernelModules = [ "amdgpu" ];
       };
-      
+
       nix.settings = {
-        experimental-features = ["nix-command" "flakes"];
+        experimental-features = [ "nix-command" "flakes" ];
         auto-optimise-store = true;
       };
-      
+
       systemd.coredump.enable = false;
       networking = {
         hostName = "catputer";
@@ -64,7 +56,7 @@
       time.timeZone = "Asia/Bangkok"; # funny city am i right
 
       i18n.defaultLocale = "en_AU.UTF-8";
-      
+
       sound.enable = true;
       hardware.pulseaudio.enable = false;
       security.rtkit.enable = true;
@@ -83,7 +75,7 @@
         allowUnfree = true;
         allowInsecure = true;
       };
-      
+
       programs = {
         fish.enable = true;
         steam.enable = true;
@@ -91,7 +83,7 @@
 
       users.users.mwe = {
         isNormalUser = true;
-        extraGroups = ["networkmanager" "wheel"];
+        extraGroups = [ "networkmanager" "wheel" ];
         shell = pkgs.fish;
         packages = with pkgs; [
           firefox
@@ -101,39 +93,39 @@
           spotify
           obsidian
           obs-studio
-        ];# ++ (with abaddon-sf; [ abaddon ]);
+          jetbrains.rust-rover
+        ]; # ++ (with abaddon-sf; [ abaddon ]);
       };
 
       environment.systemPackages = with pkgs; [
         helix
         lazygit
-        (nerdfonts.override {fonts = ["MPlus"];})
+        (nerdfonts.override { fonts = [ "MPlus" ]; })
         blackbox-terminal
         cachix
         corectrl
       ];
       system.stateVersion = "23.05";
     };
-    
+
     nixosConfigurations = {
       catputer = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs;};
-        modules = [
-          self.nixosModules.default
-          ./gnome.nix
-        ];
+        specialArgs = { inherit inputs; };
+        modules = [ self.nixosModules.default ./gnome.nix ];
       };
     };
 
     # 'home-manager --flake .#user@host'
     homeConfigurations = {
       "mwe@catputer" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs { system = "x86_64-linux";
-                              config.allowUnfree = true;
-                            config.allowInsecure = true; };
+        pkgs = import nixpkgs {
+          system = "x86_64-linux";
+          config.allowUnfree = true;
+          config.allowInsecure = true;
+        };
         useGlobalPkgs = true;
-        extraSpecialArgs = {inherit inputs;};
-        modules = [./home.nix];
+        extraSpecialArgs = { inherit inputs; };
+        modules = [ ./home.nix ];
       };
     };
   };

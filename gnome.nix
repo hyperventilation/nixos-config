@@ -1,10 +1,10 @@
-{pkgs, ...}: {
+{ pkgs, ... }: {
   services.xserver = {
     enable = true;
     displayManager.gdm.enable = true;
     desktopManager.gnome.enable = true;
     xkb.layout = "us";
-    excludePackages = [pkgs.xterm];
+    excludePackages = [ pkgs.xterm ];
   };
 
   programs.dconf.enable = true; # ./home.nix
@@ -19,8 +19,7 @@
         gnome-text-editor
         evince # nice naming conventions
         gedit
-      ]
-      ++ (with gnome; [
+      ] ++ (with gnome; [
         # gnome-font-viewer # also a font installer for whatever reason very cool
         gnome-weather
         gnome-calendar
@@ -42,6 +41,6 @@
         simple-scan
         gnome-logs
       ]);
-    systemPackages = [pkgs.gnome.gnome-tweaks];
+    systemPackages = [ pkgs.gnome.gnome-tweaks ];
   };
 }
