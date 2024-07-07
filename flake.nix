@@ -86,7 +86,10 @@
         shell = pkgs.fish;
         packages = with pkgs; [
           chromium
-          discord
+          (pkgs.discord.override {
+            withOpenASAR = true;
+            withVencord = true;
+          })
           telegram-desktop
           steamguard-cli
           spotify
@@ -104,7 +107,7 @@
         cachix
         corectrl
       ];
-      system.stateVersion = "23.05";
+      system.stateVersion = "24.05";
     };
 
     nixosModules.gnome = { pkgs, ... }: {
