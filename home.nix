@@ -1,8 +1,8 @@
-{ pkgs, ... }: {
+{ inputs, ... }: {
   # You can import other home-manager modules here
   imports = [
     # If you want to use home-manager modules from other flakes (such as nix-colors):
-    # inputs.nix-colors.homeManagerModule
+#    inputs.catppuccin.homeManagerModules.catppuccin
     # You can also split up your configuration and import pieces of it here:
   ];
 
@@ -12,8 +12,8 @@
   };
 
   home = {
-    username = "mwe";
-    homeDirectory = "/home/mwe";
+    username = "hv";
+    homeDirectory = "/home/hv";
   };
 
   programs = {
@@ -47,5 +47,5 @@
 
   # Nicely reload system units when changing configs
   systemd = { user.startServices = "sd-switch"; };
-  home.stateVersion = "23.05";
+  home.stateVersion = "24.05";
 }

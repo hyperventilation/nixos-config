@@ -18,18 +18,17 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # catppuccin.url = "github:catppuccin/nix";
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs: {
     nixosModules.default = { config, pkgs, lib, ... }: {
-      imports = [
-        ./hardware-configuration.nix
-        inputs.home-manager.nixosModules.home-manager
-      ];
+      imports =
+        [ ./hardware-configuration.nix ];
 
       home-manager = {
         extraSpecialArgs = { inherit inputs self; };
-        users.mwe = import ./home.nix;
+        users.hv = import ./home.nix;
       };
 
       boot = {
@@ -53,7 +52,7 @@
         networkmanager.enable = true;
       };
 
-      time.timeZone = "Asia/Bangkok"; # funny city am i right
+      time.timeZone = "Asia/Bangkok";
 
       i18n.defaultLocale = "en_AU.UTF-8";
 
@@ -81,19 +80,19 @@
         steam.enable = true;
       };
 
-      users.users.mwe = {
+      users.users.hv = {
         isNormalUser = true;
         extraGroups = [ "networkmanager" "wheel" ];
         shell = pkgs.fish;
         packages = with pkgs; [
-          firefox
-          vesktop
+          chromium
+          discord
           telegram-desktop
           steamguard-cli
           spotify
           obsidian
           obs-studio
-          jetbrains.rust-rover
+          vscode-fhs
         ]; # ++ (with abaddon-sf; [ abaddon ]);
       };
 
@@ -108,24 +107,73 @@
       system.stateVersion = "23.05";
     };
 
-    nixosConfigurations = {
-      catputer = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
-        modules = [ self.nixosModules.default ./gnome.nix ];
+    nixosModules.gnome = { pkgs, ... }: {
+      services.xserver = {
+        enable = true;
+        displayManager.gdm.enable = true;
+        desktopManager.gnome.enable = true;
+        xkb.layout = "us";
+        excludePackages = [ pkgs.xterm ];
+      };
+
+      programs.dconf.enable = true; # ./home.nix
+
+      environment = {
+        gnome.excludePackages = with pkgs;
+          [
+            gnome-photos
+            gnome-tour
+            gnome-console
+            gnome-connections
+            gnome-text-editor
+            evince # nice naming conventions
+            gedit
+          ] ++ (with gnome; [
+            # gnome-font-viewer # also a font installer for whatever reason very cool
+            gnome-weather
+            gnome-calendar
+            seahorse
+            cheese # webcam tool
+            gnome-music
+            epiphany # web browser
+            geary # email reader
+            gnome-characters
+            tali # poker game
+            iagno # go game
+            hitori # sudoku game
+            atomix # puzzle game
+            yelp # Help view
+            gnome-contacts
+            gnome-initial-setup
+            gnome-maps
+            gnome-system-monitor
+            simple-scan
+            gnome-logs
+          ]);
+        systemPackages = [ pkgs.gnome.gnome-tweaks ];
       };
     };
 
-    # 'home-manager --flake .#user@host'
-    homeConfigurations = {
-      "mwe@catputer" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-          system = "x86_64-linux";
-          config.allowUnfree = true;
-          config.allowInsecure = true;
-        };
-        useGlobalPkgs = true;
-        extraSpecialArgs = { inherit inputs; };
-        modules = [ ./home.nix ];
+    nixosModules.plasma = { pkgs, ... }: {
+      services.xserver.enable = true;
+      services.displayManager.sddm.enable = true;
+      services.displayManager.defaultSession = "plasmax11"; # gamer moment
+      services.desktopManager.plasma6.enable = true;
+    };
+
+    nixosConfigurations = {
+      catputer = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          self.nixosModules.default
+          self.nixosModules.gnome
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.users.hv = {
+              imports = [ ./home.nix ];
+            };
+          }
+        ];
       };
     };
   };
