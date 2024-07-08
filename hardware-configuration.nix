@@ -7,14 +7,27 @@
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
   boot.initrd.availableKernelModules =
-    [ "nvme" "xhci_pci" "ahci" "usbhid" "sd_mod" ];
+    [ "nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/1d4430cc-aaf6-4847-8703-ecd59e835d2f";
-    fsType = "ext4";
+    device = "/dev/disk/by-uuid/8eb2c69e-8dd5-4dd8-ac34-970ab4e013f0";
+    fsType = "btrfs";
+    options = [ "subvol=root" "compress=zstd" "noatime" ];
+  };
+
+  fileSystems."/home" = {
+    device = "/dev/disk/by-uuid/8eb2c69e-8dd5-4dd8-ac34-970ab4e013f0";
+    fsType = "btrfs";
+    options = [ "subvol=home" "compress=zstd" "noatime" ];
+  };
+
+  fileSystems."/nix" = {
+    device = "/dev/disk/by-uuid/8eb2c69e-8dd5-4dd8-ac34-970ab4e013f0";
+    fsType = "btrfs";
+    options = [ "subvol=nix" "compress=zstd" "noatime" "nodatacow" ];
   };
 
   fileSystems."/boot" = {

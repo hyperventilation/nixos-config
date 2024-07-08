@@ -23,8 +23,7 @@
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs: {
     nixosModules.default = { config, pkgs, lib, ... }: {
-      imports =
-        [ ./hardware-configuration.nix ];
+      imports = [ ./hardware-configuration.nix ];
 
       home-manager = {
         extraSpecialArgs = { inherit inputs self; };
@@ -68,7 +67,6 @@
         };
         pulse.enable = true;
       };
-      # bye ogl
 
       nixpkgs.config = {
         allowUnfree = true;
@@ -171,11 +169,7 @@
           self.nixosModules.default
           self.nixosModules.gnome
           home-manager.nixosModules.home-manager
-          {
-            home-manager.users.hv = {
-              imports = [ ./home.nix ];
-            };
-          }
+          { home-manager.users.hv = { imports = [ ./home.nix ]; }; }
         ];
       };
     };
