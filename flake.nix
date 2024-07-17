@@ -13,12 +13,10 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    # abaddon-sf.url = "github:SeineEloquenz/nixpkgs/abbadon_sound_fix";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # catppuccin.url = "github:catppuccin/nix";
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs: {
@@ -55,7 +53,6 @@
 
       i18n.defaultLocale = "en_AU.UTF-8";
 
-      sound.enable = true;
       hardware.pulseaudio.enable = false;
       security.rtkit.enable = true;
 
@@ -94,7 +91,7 @@
           obsidian
           obs-studio
           vscode-fhs
-        ]; # ++ (with abaddon-sf; [ abaddon ]);
+        ];
       };
 
       environment.systemPackages = with pkgs; [
@@ -104,6 +101,7 @@
         blackbox-terminal
         cachix
         corectrl
+        devenv
       ];
       system.stateVersion = "24.05";
     };
@@ -129,37 +127,38 @@
             gnome-text-editor
             evince # nice naming conventions
             gedit
-          ] ++ (with gnome; [
-            # gnome-font-viewer # also a font installer for whatever reason very cool
-            gnome-weather
-            gnome-calendar
+            geary
+            epiphany
+            cheese
             seahorse
-            cheese # webcam tool
+            gnome-calendar
+            # gnome-font-viewer
+          ] ++ (with gnome; [
+            gnome-weather
             gnome-music
-            epiphany # web browser
-            geary # email reader
             gnome-characters
-            tali # poker game
-            iagno # go game
-            hitori # sudoku game
-            atomix # puzzle game
-            yelp # Help view
+            tali
+            iagno
+            hitori
+            atomix
             gnome-contacts
             gnome-initial-setup
             gnome-maps
-            gnome-system-monitor
-            simple-scan
             gnome-logs
           ]);
-        systemPackages = [ pkgs.gnome.gnome-tweaks ];
+        systemPackages = [ pkgs.gnome-tweaks ];
       };
     };
 
     nixosModules.plasma = { pkgs, ... }: {
-      services.xserver.enable = true;
-      services.displayManager.sddm.enable = true;
-      services.displayManager.defaultSession = "plasmax11"; # gamer moment
-      services.desktopManager.plasma6.enable = true;
+      services = {
+        xserver.enable = true;
+        displayManager = {
+          sddm.enable = true;
+          defaultSession = "plasmax11";
+        };
+        desktopManager.plasma6.enable = true;
+      };
     };
 
     nixosConfigurations = {
